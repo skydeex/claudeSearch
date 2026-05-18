@@ -466,7 +466,7 @@ if ($action === 'similar') {
         ];
     }
 
-    usort($results, fn($a, $b) => $b['sim'] <=> $a['sim']);
+    usort($results, function($a, $b) { return $b['sim'] <=> $a['sim']; });
 
     echo "Similar to: \"$term\"\n\n";
     foreach (array_slice($results, 0, 15) as $r)
