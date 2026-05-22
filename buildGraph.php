@@ -8,6 +8,8 @@
 // Парсеры: parsers/php.php, parsers/js.php
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/ignore.php';
+$ignorePatterns = loadIgnorePatterns($rootDir);
 $isFull  = in_array('--full', $argv);
 
 // ---- Парсеры ----
@@ -122,7 +124,7 @@ foreach ($scanDirs as $lang => $dirs) {
 
     foreach ($dirs as $dir) {
         if (!is_dir($dir)) continue;
-        $iter = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+        $iter = makeFilteredIterator($dir, $rootDir, $ignorePatterns);
 
         foreach ($iter as $file) {
             $allowedExts = $scanExts[$lang] ?? [$lang];

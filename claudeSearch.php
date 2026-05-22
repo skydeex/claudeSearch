@@ -51,6 +51,8 @@ if (!$action || !$term) {
 }
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/ignore.php';
+$ignorePatterns = loadIgnorePatterns($rootDir);
 
 
 // Убрать содержимое строковых литералов и однострочных комментариев
@@ -331,7 +333,7 @@ if ($action === 'sql') {
     $dirs = $sqlDirs;
     foreach ($dirs as $dir) {
         if (!is_dir($dir)) continue;
-        $iter = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+        $iter = makeFilteredIterator($dir, $rootDir, $ignorePatterns);
         foreach ($iter as $file) {
             if (!in_array($file->getExtension(), ['php', 'go'])) continue;
             $content = file_get_contents($file->getPathname());
@@ -634,7 +636,7 @@ else                               $patterns = ["/".preg_quote($term, '/')."/"];
 $results = [];
 foreach ($dirs as $dir) {
     if (!is_dir($dir)) continue;
-    $iter = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+    $iter = makeFilteredIterator($dir, $rootDir, $ignorePatterns);
     foreach ($iter as $file) {
         if (!in_array($file->getExtension(), $extensions)) continue;
         $lines   = file($file->getPathname());
