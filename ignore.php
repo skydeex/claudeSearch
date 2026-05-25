@@ -59,8 +59,8 @@ function isIgnoredPath(string $relPath, array $patterns): bool {
         $pattern = str_replace('\\', '/', trim($rawPattern, '/'));
         if ($pattern === '') continue;
 
-        $hasWild = str_contains($pattern, '*') || str_contains($pattern, '?');
-        $hasSlash = str_contains($pattern, '/');
+        $hasWild = strpos($pattern, '*') !== false || strpos($pattern, '?') !== false;
+        $hasSlash = strpos($pattern, '/') !== false;
 
         if (!$hasWild && !$hasSlash) {
             // Простое имя — совпадает с любым компонентом пути
@@ -74,8 +74,8 @@ function isIgnoredPath(string $relPath, array $patterns): bool {
             }
         } else {
             // Путь с / — проверяем как префикс
-            if (str_starts_with($relPath . '/', $pattern . '/')) return true;
-            if (str_starts_with($relPath, $pattern . '/'))       return true;
+            if (strpos($relPath . '/', $pattern . '/') === 0) return true;
+            if (strpos($relPath, $pattern . '/')       === 0) return true;
         }
     }
     return false;
